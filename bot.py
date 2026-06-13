@@ -9,7 +9,7 @@ bot = telebot.TeleBot(TOKEN)
 def handle_start(message):
     bot.send_message(
         message.chat.id,
-        "Привет! Я бот по игре Honkai Star Rail, который может тебе рассказать информацию о каждом персонаже в игре.\n\nНапиши /Information чтобы узнать о игре получше.\nНапиши /Character чтобы посмотреть на детали твоего любимого персонажа."
+        "Привет! Я бот по игре Honkai Star Rail, который может тебе рассказать информацию о каждом персонаже в игре.\n\nНапиши /Information чтобы узнать о игре получше.\nНапиши /Character чтобы посмотреть на детали твоего любимого персонажа.\n Напиши /Stats чтобы посмотреть статистику по базе данных."
     )
 
 @bot.message_handler(commands=['Information'])
@@ -45,14 +45,33 @@ def search_character(message):
 
     text = (
         f"⭐ {character['name']}\n\n"
-        f"ID: {character['id']}\n"
         f"Редкость: {character['rarity']}★\n"
         f"Путь: {character['path']}\n"
         f"Элемент: {character['element']}\n"
         f"Фракция: {character['faction']}\n"
         f"Планета: {character['planet']}\n\n"
-        f"{character['description']}"
+        f"📖 Описание:\n{character['description']}"
     )
+
+    bot.send_message(message.chat.id, text)
+
+@bot.message_handler(commands=['Stats'])
+def handle_stats(message):
+
+    total = Bot.get_total_characters()
+    rarity = Bot.get_rarity_stats()
+    elements = Bot.get_element_stats()
+
+    text = f"📊 Статистика Honkai: Star Rail\n\n"
+    text += f"Всего персонажей: {total}\n\n"
+
+    text += "⭐ По редкости:\n"
+    for r, count in rarity:
+        text += f"{r}★: {count}\n"
+
+    text += "\n⚡ По элементам:\n"
+    for element, count in elements:
+        text += f"{element}: {count}\n"
 
     bot.send_message(message.chat.id, text)
 

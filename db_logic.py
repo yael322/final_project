@@ -51,3 +51,49 @@ class Bot:
             "planet": result[6],
             "description": result[7]
         }
+    
+    @staticmethod
+    def get_total_characters():
+        conn = sqlite3.connect("hsr.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM characters")
+        result = cursor.fetchone()[0]
+
+        conn.close()
+        return result
+
+
+    @staticmethod
+    def get_rarity_stats():
+        conn = sqlite3.connect("hsr.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT rarity, COUNT(*)
+            FROM characters
+            GROUP BY rarity
+        """)
+
+        result = cursor.fetchall()
+
+        conn.close()
+        return result
+
+
+    @staticmethod
+    def get_element_stats():
+        conn = sqlite3.connect("hsr.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT element, COUNT(*)
+            FROM characters
+            GROUP BY element
+            ORDER BY COUNT(*) DESC
+        """)
+
+        result = cursor.fetchall()
+
+        conn.close()
+        return result
